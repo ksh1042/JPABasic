@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 class JpaBasicTest
 {
-
   private JpaBasic jb;
 
   @BeforeEach
