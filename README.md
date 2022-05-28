@@ -39,3 +39,31 @@
 > ※ 이름과 다르게 영속성 컨텍스의 내용을 비우지 않는다. 영속성 컨텍스트는 여전히 그대로 유지된다. 현재 데이터베이스의 상태에 지금까지의 동작을 반영하는 단계이며, 아직 확정까지 이르지는 않으므로 다른 트랜잭션에서는 현재 상태가 반영되어 있지 않은 상태이다.<br>
 > ※ entityManager.setFlushMode(FlushModeType)을 통해 플리서 모드를 선택 가능하다.(AUTO-기본/COMMIT)
 
+## JPA 간단한 팁
+- 객체 매핑
+>- @Column(unique = true/false) : 제약조건 이름이 랜덤한 해시값으로 입력되어 잘 쓰이지 않으며 보통 @Table의 uniqueConstrains 옵션을 이용한다. 후자의 경우는 제약조건의 명칭까지 직접 설정이 가능하다.<br>
+>- @Column(columnDefinition = "options") : 컬럼의 상세 조건 직접 입력이 가능하다.<br>
+>```java
+>...
+>@Column(columnDefinition = "varchar2(100) default 'Kim'")
+>private String name;
+>...
+>```
+>```sql
+>create table ...(
+>   ...
+>   name varchar2(100) default 'kim',
+>   ...
+>)
+>``` 
+>- @Column(percision = int) : BigDecimal, BigInteger와 같은 거대한 숫자를 다룰 때에 자릿수 제한을 위해 사용된다.
+>- @Enumerated(EnumType.ORDINAL) : Enumerated의 기본 설정이지만, 열거형의 순서를 통해 값이 입력되므로 보통 안 쓰는 것을 권장한다.
+>- @Lob : 멤버변수가 String 타입이면 자동으로 CLOB으로 생성되며, 그 외에는 전부 BLOB으로 생성된다.
+- PK 시퀀스 매핑
+>- GeneratedValue(strategy = GenerationType.TABLE) : 시퀀스 생성 전략을 테이블로 하는 방법으로, 별도의 키 관리 테이블을 생성 후 해당 테이블을 통해 다음 값을 가져오는 전략이다. 레이스 컨디션 등 성능상 여러 이슈가 있으므로 잘 쓰이지는 않으나, 모든 데이터베이스에서 사용이 가능하다는 특징이 있다.
+ 
+- Primary Key 선택 팁
+>PK의 성질 중 값이 변하면 안된다는 성질에 의해 자연 키를 PK 설정하는 것은 차후에 큰 문제를 야기할 수 있다. 그러므로 UUID, 시퀀스 등을 PK로 지정하여 사용하는 것이 옳다 한다.(by 김영한)
+- @GeneratedValue 전략
+>GenerationValue.IDENTY : 특이사항으로 해당 전략을 사용 중 PK설정을 하지 않을 경우 flush 혹은 commit이 아닌 persist를 호출 할 때에 insert query가 발생한다. insert query가 발생하기 전까지는 PK의 값을 알 수 없는 상황이기 때문이다.
+>>※ 위의 경우와 같이 insert query가 발생한 경우 JDBC에서 해당 값을 확인할 수 있기 때문에 insert 직후 해당 데이터를 조회 시 select query가 발생하지 않는다.
