@@ -64,6 +64,10 @@
  
 - Primary Key 선택 팁
 >PK의 성질 중 값이 변하면 안된다는 성질에 의해 자연 키를 PK 설정하는 것은 차후에 큰 문제를 야기할 수 있다. 그러므로 UUID, 시퀀스 등을 PK로 지정하여 사용하는 것이 옳다 한다.(by 김영한)
-- @GeneratedValue 전략
->GenerationValue.IDENTY : 특이사항으로 해당 전략을 사용 중 PK설정을 하지 않을 경우 flush 혹은 commit이 아닌 persist를 호출 할 때에 insert query가 발생한다. insert query가 발생하기 전까지는 PK의 값을 알 수 없는 상황이기 때문이다.
+
+- GenerationValue.IDENTY 
+>특이사항으로 해당 전략을 사용 중 PK설정을 하지 않을 경우 flush 혹은 commit이 아닌 persist를 호출 할 때에 insert query가 발생한다. insert query가 발생하기 전까지는 PK의 값을 알 수 없는 상황이기 때문이다.
 >>※ 위의 경우와 같이 insert query가 발생한 경우 JDBC에서 해당 값을 확인할 수 있기 때문에 insert 직후 해당 데이터를 조회 시 select query가 발생하지 않는다.
+- GenerationValue.SEQUENCE 
+>persist가 호출 될 때에 다음 시퀀스 값을 호출하여 영속성 컨텍스트에 등록한다.<br>
+>>※ allocationSize : 해당 설정 값을 통해 미리 시퀀스 값을 예측하여 사용, 레이스 컨디션 이슈 등의 성능 최적화를 도모한다. 하지만, 시퀀스로부터 생성시각 순서가 보장되지 않을 가능성이 높으며, 어플리케이션 종료시 메모리에 기록된 현재 시점의 시퀀스 값을 잃어버려 시퀀스 가용범위의 낭비가 발생할 수 있다. Table의 allocationSize도 동일한 동작을 수행한다. 
