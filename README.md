@@ -39,6 +39,34 @@
 > ※ 이름과 다르게 영속성 컨텍스의 내용을 비우지 않는다. 영속성 컨텍스트는 여전히 그대로 유지된다. 현재 데이터베이스의 상태에 지금까지의 동작을 반영하는 단계이며, 아직 확정까지 이르지는 않으므로 다른 트랜잭션에서는 현재 상태가 반영되어 있지 않은 상태이다.<br>
 > ※ entityManager.setFlushMode(FlushModeType)을 통해 플리서 모드를 선택 가능하다.(AUTO-기본/COMMIT)
 
+- 관계매핑
+>- N:1 관계 : N 객체의 참조 변수에 @ManyToOne(), 1 객체의 참조 변수에 @OneToMany(mappedBy=N객체 참조변수의 변수이름)
+>```java
+>@Entity
+>class Member {
+> @Id
+> @Column(name="member_id")
+> private Long id;
+> private String name;
+> 
+> @ManyToOne()
+> private Team team;
+> // Getter/Setter...
+>} 
+>@Entity
+>class Team {
+> @Id
+> @Column(name="team_id")
+> private Long id;
+> private String name;
+>
+> @OneToMany(mappedBy="team") // Member.team
+> List<Member> members = new ArrayList<>();
+>
+> // Getter/Setter...
+>}
+>```
+
 ## JPA 간단한 팁
 - 객체 매핑
 >- @Column(unique = true/false) : 제약조건 이름이 랜덤한 해시값으로 입력되어 잘 쓰이지 않으며 보통 @Table의 uniqueConstrains 옵션을 이용한다. 후자의 경우는 제약조건의 명칭까지 직접 설정이 가능하다.<br>
@@ -70,4 +98,5 @@
 >>※ 위의 경우와 같이 insert query가 발생한 경우 JDBC에서 해당 값을 확인할 수 있기 때문에 insert 직후 해당 데이터를 조회 시 select query가 발생하지 않는다.
 - GenerationValue.SEQUENCE 
 >persist가 호출 될 때에 다음 시퀀스 값을 호출하여 영속성 컨텍스트에 등록한다.<br>
->>※ allocationSize : 해당 설정 값을 통해 미리 시퀀스 값을 예측하여 사용, 레이스 컨디션 이슈 등의 성능 최적화를 도모한다. 하지만, 시퀀스로부터 생성시각 순서가 보장되지 않을 가능성이 높으며, 어플리케이션 종료시 메모리에 기록된 현재 시점의 시퀀스 값을 잃어버려 시퀀스 가용범위의 낭비가 발생할 수 있다. Table의 allocationSize도 동일한 동작을 수행한다. 
+>>※ allocationSize : 해당 설정 값을 통해 미리 시퀀스 값을 예측하여 사용, 레이스 컨디션 이슈 등의 성능 최적화를 도모한다. 하지만, 시퀀스로부터 생성시각 순서가 보장되지 않을 가능성이 높으며, 어플리케이션 종료시 메모리에 기록된 현재 시점의 시퀀스 값을 잃어버려 시퀀스 가용범위의 낭비가 발생할 수 있다. Table의 allocationSize도 동일한 동작을 수행한다.
+
