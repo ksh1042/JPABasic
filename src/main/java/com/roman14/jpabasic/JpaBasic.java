@@ -1,7 +1,10 @@
 package com.roman14.jpabasic;
 
 
+import com.roman14.jpabasic.entity.Classs;
 import com.roman14.jpabasic.entity.Member;
+import com.roman14.jpabasic.entity.Team;
+import com.roman14.jpabasic.entity.enumeration.Sex;
 import org.hibernate.JDBCException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 public class JpaBasic
@@ -30,21 +35,38 @@ public class JpaBasic
 
       tx.begin();
 
+      final Team team = createTeamDummy(100L);
+      final Classs classs = new Classs();
+
+      classs.setId(1L);
+      classs.setName("");
+
+      em.persist(team);
+
+      em.flush();
+
       final Member member = createMemberDummy(1L);
-//      final Member member2 = createMemberDummy(2L);
 
-      // save
-//      em.persist(member);
-//      em.persist(member2);
+      member.setTeam(team);
 
-      Member findMember = em.find(Member.class, 1L);
+      em.persist(member);
+
+
+
+      em.flush();
+      em.clear();
+
+      final Team findTeam = em.find(Team.class, 100L);
+
+      System.out.println(Arrays.toString(findTeam.getMembers().stream()
+        .map(m -> m.getName())
+        .toArray()
+      ));
 
       // JPQL select ALL
-      List<Member> resultList = em.createQuery("select m from Member as m", Member.class)
-        .getResultList();
+//      List<Member> resultList = em.createQuery("select m from Member as m", Member.class)
+//        .getResultList();
 
-      // Update
-//      findMember.setName("memberAA");
 
       tx.commit();
 
@@ -64,11 +86,24 @@ public class JpaBasic
 
   private Member createMemberDummy(long id)
   {
-    Member member = new Member();
+    final Member member = new Member();
 
     member.setId(id);
     member.setName("name" + id);
+    member.setSex(Sex.MALE);
+    member.setAddTime(LocalDateTime.now());
+    member.setDescription("create new member");
 
     return member;
+  }
+
+  private Team createTeamDummy(long id)
+  {
+    final Team team = new Team();
+
+    team.setId(id);
+    team.setName("team1");
+
+    return team;
   }
 }

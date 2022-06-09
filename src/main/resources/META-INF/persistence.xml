@@ -4,6 +4,8 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
   <persistence-unit name="JpaBasic">
     <class>com.roman14.jpabasic.entity.Member</class>
+    <class>com.roman14.jpabasic.entity.Team</class>
+    <class>com.roman14.jpabasic.entity.BoardItem</class>
     <properties>
       <!--  Necessary   -->
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
@@ -18,7 +20,7 @@
         <!--   Persistence Context lazy write buffer size   -->
       <property name="hibernate.jdbc.batch_size" value="10"/>
       <property name="hibernate.use_sql_comments" value="true"/>
-<!--      <property name="hibernate.hbm2ddl.auto" value="false"/>-->
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>
 </persistence>
