@@ -145,6 +145,20 @@
 >- 프록시 타입 비교시 ```==``` 비교 연산자가 아닌 ```instance of``` 비교 연산을 해야 한다. 대부분의 JPA Entity 객체들도 ```instance of ```를 통해 비교하는 것이 좋다.
 >- 영속성 엔티티에 찾고자 하는 데이터가 존재한다면 프록시 엔티티가 아닌 일반적인 엔티티를 반환한다. 
 >- 영속성 컨텍스트에 접근하지 못하는 경우에는 ```LazyInitializationException```가 발생되니 주의해야한다.(detach, clear, close 등을 통한 영속성 컨텍스트와의 연결이 끊긴 경우)
+>- ```PersistenceUnitUtil.isLoaded(Object entity)```
+>>- 아래의 방법을 통해 현재 프록시가 영속성 컨텍스트에 로드된 상태인지 확인할 수 있다.
+>> ```java
+>> EntityManagerFactory emf = ...;
+>> EntityManager em = ...;
+>> Entity entity = em.getReference(Entity.class, 1L);
+>> emf.getPersistenceUnitUtil.isLoaded(entity);
+>> ```
+>- ```Hibernate.initialize(Object entity)```
+>>- 아래의 방법을 통해 프록시를 강제 초기화 가능하다. (구현체인 Hibernate에서 제공되는 기능이며, 표준 JPA 스펙에는 존재하지 않는 기능) 
+>> ```java
+>> Entity entity = em.getReference(Entity.class, 1L);
+>> Hibernate.initialize(entity);
+>> ```
 
 <hr/>
 
