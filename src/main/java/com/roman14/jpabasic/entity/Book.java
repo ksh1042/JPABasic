@@ -26,5 +26,11 @@ public class Book extends Item
   public void setIsbn(String isbn)
   {
     this.isbn = isbn;
+    logIsbn(isbn);
+  }
+
+  private void logIsbn(String isbn)
+  {
+    System.out.println(isbn);
   }
 }

@@ -121,6 +121,31 @@
 >```
 >- 해딩 어노테이션을 사용한 클래스는 조회가 불가능하다.
 
+- Proxy
+>- 프록시는 JPA 표준 스펙이 아니며, 구현체에 따라 달라질 수 있다. 해당 내용은 Hibernate 기준으로 작성되었다.
+> ```java
+> public class Main {
+>   public void main()
+>   {
+>     EntityManager em = ...;
+>     
+>     Board refBoard = em.getReference(Board.class, 1L);
+> 
+>     System.out.println("===Result===");
+>     System.out.println("refBoard.getClass() = " + refBoard.getClass());
+>   }
+> }
+> ```
+> ```
+> ====Result====
+> Board$HibernateProxy$ocdVHpjy
+> ```
+>- ```entityManager.getReference()``` 호출 시 hibernate 가 사용자 클래스를 별도로 상속받아 Proxy 클래스를 생성한다.
+>- 해당 프록시 클래스는 사용자 클래스와 동일하나 참조 데이터만 가지는 껍데기 클래스이다. 
+>- 프록시 타입 비교시 ```==``` 비교 연산자가 아닌 ```instance of``` 비교 연산을 해야 한다. 대부분의 JPA Entity 객체들도 ```instance of ```를 통해 비교하는 것이 좋다.
+>- 영속성 엔티티에 찾고자 하는 데이터가 존재한다면 프록시 엔티티가 아닌 일반적인 엔티티를 반환한다. 
+>- 영속성 컨텍스트에 접근하지 못하는 경우에는 ```LazyInitializationException```가 발생되니 주의해야한다.(detach, clear, close 등을 통한 영속성 컨텍스트와의 연결이 끊긴 경우)
+
 <hr/>
 
 ## JPA 간단한 팁

@@ -10,10 +10,7 @@ import org.hibernate.JDBCException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -36,13 +33,23 @@ public class JpaBasic
       tx  = em.getTransaction();
       tx.begin();
 
-      Book book = new Book();
-      book.setPrice(new BigInteger("23000"));
-      book.setStockQuantity(5L);
-      book.setAuthor("Moon");
-      book.setIsbn("123456");
+      Book refBook = em.getReference(Book.class, 1L);
 
-      em.persist(book);
+      System.out.println("refBook.getId() = " + refBook.getId());
+      try
+      {
+        System.out.println("refBook.getPrice() = " + refBook.getPrice());
+      }
+      catch( EntityNotFoundException e )
+      {
+        Book book = new Book();
+        book.setPrice(new BigInteger("23000"));
+        book.setStockQuantity(5L);
+        book.setAuthor("Moon");
+        book.setIsbn("123456");
+
+        em.persist(book);
+      }
 
       tx.commit();
     }

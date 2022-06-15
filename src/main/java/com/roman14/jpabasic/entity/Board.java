@@ -11,8 +11,13 @@ public class Board
   @Column(name = "board_id", nullable = false)
   private Long id;
 
+  private String name;
+
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "board")
   private List<BoardItem> items = new ArrayList<>();
+
+  @Lob
+  private String discription;
 
   public List<BoardItem> getItems()
   {
@@ -32,5 +37,25 @@ public class Board
   public void setId(Long id)
   {
     this.id = id;
+  }
+
+  public String getName()
+  {
+    return name;
+  }
+
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+
+  public String getDiscription()
+  {
+    return discription;
+  }
+
+  public void setDiscription(String discription)
+  {
+    this.discription = discription;
   }
 }
