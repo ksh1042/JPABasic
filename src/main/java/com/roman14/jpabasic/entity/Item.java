@@ -5,9 +5,9 @@ import java.math.BigInteger;
 
 @Entity
 @Table(name = "items")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
-public abstract class Item
+public abstract class Item extends BaseEntity
 {
   @Id @GeneratedValue
   @Column(name = "item_id", nullable = false)
