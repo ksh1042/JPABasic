@@ -92,13 +92,35 @@
 >- 매핑 전략으로 총 세가지 방법이 있다.
 >>- InheritanceType.JOINED : 조인을 통해 상속구조를 표현하는 방식으로 가장 객체지향적으로 가깝다. 서브테이블에 PK&FK를 두어 슈퍼테이블과 관계를 가지는 방식이다.
 >>- InheritanceType.SINGLE_TABLE : 한 테이블에 슈퍼클래스와 모든 서브클래스를 합치는 방식(해당 전략을 사용할 경우 ```@DiscriminatorColumn```전략이 기본적으로 설정되어있다).
->>- InheritanceType.TABLE_PER_CLASS : 각 서브클래스에 슈퍼클래스의 필드를 포함시키는 방식. 슈퍼클래스를 통해 조회 시 비효율적인 쿼리가 생성된다는 단점이 있다.
+>>- InheritanceType.TABLE_PER_CLASS : 각 서브클래스에 슈퍼클래스의 필드를 포함시키는 방식. 슈퍼클래스를 통해 조회 시 비효율적인 쿼리(모든 서브클래스의 ```UNION```)가 생성된다는 단점이 있다.
 > 
 
 - ```@DiscriminatorColumn```
 >- 상속관계의 테이블의 슈퍼클래스 엔티티 클래스에 해당 어노테이션을 추가하면 ```DTYPE```컬럼(이름 변경가능)이 데이터베이스에 생성되며 해당 슈퍼클래스의 인스턴스가 어떤 서브클래스로 구성이 되었는지에 대해 기록이 된다.
 >- 해당 어노테이션 인터페이스를 통해 컬럼을 넣으면 추후 그래프적으로 표현하기위해 해당
 >- 서브클래스의 ```@DiscriminatorValue```를 통해 ```DTYPE```에 엔티티명이 아닌 사용자지정 이름입력이 가능하다.
+> 
+
+- ```@MappedSuperclass```
+>- 매핑정보만 공통으로 사용하고 싶을때에 사용하는 어노테이션.
+>- 상속받을 슈퍼클래스에 사용한다. 사용 방법은 아래와 같다.
+>```java
+>@MappedSuperclass
+>public abstract class BaseEntity {
+>   private String registUserId;
+>
+>   public String getRegistUserId() { return registUserId; }
+>   public void setRegistUserId(String registUserId) { this.registUserId = registUserId; }
+>}
+>
+>@Entity
+>public abstract Board extends BaseEntity {
+>   private BoardType type;
+>   ...
+>}
+>```
+>- 해딩 어노테이션을 사용한 클래스는 조회가 불가능하다.
+
 <hr/>
 
 ## JPA 간단한 팁

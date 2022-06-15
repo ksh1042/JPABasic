@@ -6,6 +6,16 @@
     <class>com.roman14.jpabasic.entity.Member</class>
     <class>com.roman14.jpabasic.entity.Team</class>
     <class>com.roman14.jpabasic.entity.BoardItem</class>
+    <class>com.roman14.jpabasic.entity.Classs</class>
+    <class>com.roman14.jpabasic.entity.Item</class>
+    <class>com.roman14.jpabasic.entity.Order</class>
+    <class>com.roman14.jpabasic.entity.Album</class>
+    <class>com.roman14.jpabasic.entity.Book</class>
+    <class>com.roman14.jpabasic.entity.Movie</class>
+    <class>com.roman14.jpabasic.entity.Blog</class>
+    <class>com.roman14.jpabasic.entity.Board</class>
+    <class>com.roman14.jpabasic.entity.Grade</class>
+    <class>com.roman14.jpabasic.entity.OrderItem</class>
     <properties>
       <!--  Necessary   -->
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>

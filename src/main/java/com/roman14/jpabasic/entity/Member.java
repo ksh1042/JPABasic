@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Member
+public class Member extends BaseEntity
 {
   @Id
   @Column(name = "member_id")

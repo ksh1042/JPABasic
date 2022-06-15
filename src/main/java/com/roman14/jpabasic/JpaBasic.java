@@ -1,6 +1,7 @@
 package com.roman14.jpabasic;
 
 
+import com.roman14.jpabasic.entity.Book;
 import com.roman14.jpabasic.entity.Classs;
 import com.roman14.jpabasic.entity.Member;
 import com.roman14.jpabasic.entity.Team;
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -32,44 +34,17 @@ public class JpaBasic
       emf = Persistence.createEntityManagerFactory("JpaBasic");
       em  = emf.createEntityManager();
       tx  = em.getTransaction();
-
       tx.begin();
 
-      final Team team = createTeamDummy(100L);
-      final Classs classs = new Classs();
+      Book book = new Book();
+      book.setPrice(new BigInteger("23000"));
+      book.setStockQuantity(5L);
+      book.setAuthor("Moon");
+      book.setIsbn("123456");
 
-      classs.setId(1L);
-      classs.setName("");
-
-      em.persist(team);
-
-      em.flush();
-
-      final Member member = createMemberDummy(1L);
-
-      member.setTeam(team);
-
-      em.persist(member);
-
-
-
-      em.flush();
-      em.clear();
-
-      final Team findTeam = em.find(Team.class, 100L);
-
-      System.out.println(Arrays.toString(findTeam.getMembers().stream()
-        .map(m -> m.getName())
-        .toArray()
-      ));
-
-      // JPQL select ALL
-//      List<Member> resultList = em.createQuery("select m from Member as m", Member.class)
-//        .getResultList();
-
+      em.persist(book);
 
       tx.commit();
-
     }
     catch( Exception e )
     {
