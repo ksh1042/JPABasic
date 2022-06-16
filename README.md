@@ -160,6 +160,15 @@
 >> Hibernate.initialize(entity);
 >> ```
 
+- ```FetchType.EAGER```/```FetchType.LAZY```
+>>- FetchType.EAGER : 조회 시 즉시 로딩하는 전략.
+>>- FetchType.LAZY : 조회 시 프록시를 준비하고 실제 데이터 접근 시 조회를 해오는 로딩 전략
+>- EAGER 의 경우 예상치 못한 쿼리(다량의 Join)와 N+1 문제 등이 발생한다. 특별한 이유가 없다면 LAZY 로딩 전략을 사용하는 편이 좋다.
+> 
+
+- N+1 문제
+>- FetchType.EAGER 로딩 전략을 사용할 때에 발생하는 문제로 A has B 관계에서 A를 조회 시 A List가 가지고 있을 모든 B의 데이터를 조회하기 위해 N개의 B 데이터를 조회해온다.<br><br>
+> 즉, 최초에 발생하는 A 쿼리와 N개 만큼 발생하는 B 쿼리로 ```N+1``` 문제라 불린다.
 <hr/>
 
 ## JPA 간단한 팁
