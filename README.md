@@ -234,7 +234,55 @@
 - ```CascadeType.ALL + orphanRemoval = true```
 >- 두 설정을 조합하여 사용할 경우 부모 객체가 자식 객체의 생명주기를 관리할 수 있다는 장점이 생긴다.
 >- ```DDD```개발법에 ```Aggregate Root``` 개념을 구현할때에 도움이 된다 한다.
+> 
+
+- 임베디드 타입
+>- 좀 더 객체지향적으로 응집도를 높이기 위해 사용하는 타입
+>- 임베디드 타입의 클래스는 소유한 클래스의 라이프사이클 주기를 따라간다.
+>- 임베디드 타입으로 활용할 클래스에는 ```@Embeddable``` 을 추가한다.
+>- 임베디트 타입을 사용할 필드에는 ```@Embedded```를 추가한다.
+>- ```@Embeddable``` 또는 ```@Embedded``` 둘 중 한 개만 입력을 하여도 정상 동작한다.
+> ```java
+> @Embeddable
+> public class Emb
+> {
+>   private String em1;
+>   private String em2;
+> }
+> 
+> @Entity
+> public class Obj
+> {
+>   @Embedded
+>   private Emb emb;
+> }
+> ```
+
+- ```@AttributeOverrides``` ```@AttributeOverride```
+>- 위의 임베디드 타입의 필드를 여러개 중복해서 사용할 경우 오류가 발생한다.
+>- 중복하여 사용하기 위해 해당 어노테이션들을 사용하여 설정을 재정의 한다.
+> ```java
+> @Entity
+> public class Member {
+>   ...
+>   @Embedded
+>   private Address homeAddress;
+>
+>   @Embedded
+>   @AttributeOverrides({
+>   @AttributeOverride(name = "city", column = @Column(name = "work_city")),
+>   @AttributeOverride(name = "address", column = @Column(name = "work_address")),
+>   @AttributeOverride(name = "zipCode", column = @Column(name = "work_zipCode"))
+>   })
+>   private Address workAddress;
+>   ...
+> }
+> ```
+
+
 <hr/>
+
+
 
 ## JPA 간단한 팁
 - 객체 매핑

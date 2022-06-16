@@ -6,6 +6,6 @@ public class JpaBasicMain
   {
     JpaBasic jb = new JpaBasic();
 
-    jb.main();
+    jb.addMember();
   }
 }

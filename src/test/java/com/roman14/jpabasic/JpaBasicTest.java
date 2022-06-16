@@ -1,5 +1,6 @@
 package com.roman14.jpabasic;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,8 @@ class JpaBasicTest
   @Test
   void main()
   {
-    jb.main();
+    Assertions.assertDoesNotThrow(
+      () -> jb.addMember()
+    );
   }
 }
