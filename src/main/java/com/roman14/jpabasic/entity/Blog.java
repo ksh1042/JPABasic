@@ -9,7 +9,7 @@ public class Blog
   @Column(name = "blog_id", nullable = false)
   private Long id;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id", unique = true)
   private Member member;
 

@@ -18,7 +18,7 @@
 > &nbsp;어플리케이션 단위로 엔티티 매니저를 생성하는 팩토리 클래스이며, 무언가의 비즈니스 로직에 의해 요청이 들어올 경우 엔티티 매니저를 생성하는 역할이다.<br>
 > ※ 엔티티 매니저 팩토리는 어플리케이션 기동 중 생성되며 어플리케이션 종료 시 자원을 반환해야 한다.
 
-- 지연쓰기
+- 지연쓰기 지원
 > &nbsp;각 동작이 호출될 때에 즉시 실행하지 않고 명령을 모아두었다 flush & commit 발생 시 명령을 한꺼번에 수행한다.<br>
 > ※ persistence.xml 혹은 application.yml 등의 설정파일에서 hibernate.jdbc.batch_size 값을 변경하여 지연쓰기에 사용될 공간의 크기를 지정이 가능하다.
 
@@ -164,11 +164,76 @@
 >>- FetchType.EAGER : 조회 시 즉시 로딩하는 전략.
 >>- FetchType.LAZY : 조회 시 프록시를 준비하고 실제 데이터 접근 시 조회를 해오는 로딩 전략
 >- EAGER 의 경우 예상치 못한 쿼리(다량의 Join)와 N+1 문제 등이 발생한다. 특별한 이유가 없다면 LAZY 로딩 전략을 사용하는 편이 좋다.
+>- ```@ManyToOne``` ```@OneToOne``` 어노테이션은 기본적으로 ```FetchType.EAGER```가 기본 설정이다. 잘 모르겠다면 해당 어노테이션을 들어가 확인해보면 기본 설정을 확인할 수 있다.
 > 
 
 - N+1 문제
 >- FetchType.EAGER 로딩 전략을 사용할 때에 발생하는 문제로 A has B 관계에서 A를 조회 시 A List가 가지고 있을 모든 B의 데이터를 조회하기 위해 N개의 B 데이터를 조회해온다.<br><br>
 > 즉, 최초에 발생하는 A 쿼리와 N개 만큼 발생하는 B 쿼리로 ```N+1``` 문제라 불린다.
+> <br><br>
+>- 해결 방법
+>>- FetchJoin (JPQL)
+>>>- 가장 기본적인 방법이며, JPQL에 사용하는 해결 방법으로 조회 시 별도 조회가 아닌 ```join```을 명시하여 한꺼번에 가져오는 방법이다.
+>>> ```jpaql
+>>> select m from Member m join fetch m.team; 
+>>> ```
+>>-
+>>
+
+- ```CASCADE```
+>- 일반적인 데이터베이스의 Cascade 와는 다른 개념으로 부모클래스에서 자식클래스들의 영속성을 전이시킬때 사용된다.
+> ```java
+> public class Team
+> {
+>   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+>   private List<Member> members = new ArrayList<>();
+> }
+> 
+> public class Main
+> {
+>   public void save(Team team, Member... members)
+>   {
+>      for(Member m : members)
+>      {
+>         team.getMembers().add(m);
+>      }
+>    
+>      // 각 멤버를 영속성에 등록하는 코드를 작성할 필요 없이, 팀을 영속화 시킬때에 멤버들이 같이 영속화된다. 
+>      em.persist(team);
+>   }
+> }
+> 
+> ```
+>- 부모 클래스와 자식클래스의 라이프사이클이 같을 경우에만 사용한다.
+>- 부모 클래스가 자식클래스의 유일할 소유자일 경우에만 사용한다. 다른 클래스가 자식클래스를 소유하는 경우에는 사용하지 않는다.
+> 
+
+- ```@...To...(orphanRemoval = true)```
+>- 해당 설정을 사용 할 경우 mappedBy로 지정된 객체에서만 관리되지 않고, 컬렉션에서 추방되어 연관관계가 끊어진 객체를 영속성 컨텍스트 및 DB에서 자동적으로 삭제해준다.
+> ```java
+> public class Parent {
+>   @OneToMany(mappedBy = "parent", orphanRemoval = true)
+>   private List<Child> childs = new ArrayList<>();
+> }
+> public class Main {
+>   public void main()
+>   {
+>     ...
+>     Parent parent = em.find(Parent.class, 1L);
+> 
+>     // 컬렉션에서 child를 제외시킬때에 영속성 컨텍스트에서 child가 제외되며, DELETE 쿼리도 함께 실행된다.
+>     parent.getChilds().remove(child);
+>   }
+> }
+> ```
+>- 위의 ```CASECADE```와 같은 주의사항을 요한다.
+>- 부모 객체를 ```remove``` 할 경우, 연결된 자식 객체를 고아객체로 판정하여 전부 삭제한다.
+>- ```CascadeType.ALL``` ```CascadeType.REMOVE```와 비슷하게 동작한다.
+> 
+
+- ```CascadeType.ALL + orphanRemoval = true```
+>- 두 설정을 조합하여 사용할 경우 부모 객체가 자식 객체의 생명주기를 관리할 수 있다는 장점이 생긴다.
+>- ```DDD```개발법에 ```Aggregate Root``` 개념을 구현할때에 도움이 된다 한다.
 <hr/>
 
 ## JPA 간단한 팁

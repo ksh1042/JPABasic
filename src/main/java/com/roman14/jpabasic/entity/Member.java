@@ -17,7 +17,7 @@ public class Member extends BaseEntity
   @Enumerated(EnumType.STRING)
   private Sex sex;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "team_id")
   private Team team;
 

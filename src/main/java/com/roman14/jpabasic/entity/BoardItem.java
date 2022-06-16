@@ -10,7 +10,7 @@ public class BoardItem
   @Column(name = "item_id", nullable = false)
   private Long id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "board_id")
   private Board board;
 
