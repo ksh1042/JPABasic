@@ -22,7 +22,7 @@ public class Address
     return city;
   }
 
-  public void setCity(String city)
+  private final void setCity(String city)
   {
     this.city = city;
   }
@@ -32,7 +32,7 @@ public class Address
     return address;
   }
 
-  public void setAddress(String address)
+  private final void setAddress(String address)
   {
     this.address = address;
   }
@@ -42,7 +42,7 @@ public class Address
     return zipCode;
   }
 
-  public void setZipCode(String zipCode)
+  private final void setZipCode(String zipCode)
   {
     this.zipCode = zipCode;
   }

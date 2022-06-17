@@ -32,7 +32,7 @@ public class WorkTime
     return startTime;
   }
 
-  public void setStartTime(LocalDateTime startTime)
+  private final void setStartTime(LocalDateTime startTime)
   {
     this.startTime = startTime;
   }
@@ -42,7 +42,7 @@ public class WorkTime
     return endTime;
   }
 
-  public void setEndTime(LocalDateTime endTime)
+  private final void setEndTime(LocalDateTime endTime)
   {
     this.endTime = endTime;
   }
