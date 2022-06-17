@@ -5,6 +5,10 @@ import com.roman14.jpabasic.entity.embeded.WorkTime;
 import com.roman14.jpabasic.entity.enumeration.Sex;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Member extends BaseEntity
@@ -39,6 +43,15 @@ public class Member extends BaseEntity
 
   @Embedded
   private Address homeAddress;
+
+  @ElementCollection
+  @CollectionTable( name = "UsedUserId", joinColumns = @JoinColumn(name = "member_id") )
+  @Column(name = "used_user_id")
+  private List<String> usedUserIds = new ArrayList<>();
+
+  @ElementCollection
+  @CollectionTable( name = "Address", joinColumns = @JoinColumn(name = "member_id") )
+  private Set<Address> addressHistory = new HashSet<>();
 
   @Embedded
   @AttributeOverrides({
@@ -139,6 +152,7 @@ public class Member extends BaseEntity
   public void setHomeAddress(Address homeAddress)
   {
     this.homeAddress = homeAddress;
+    this.addressHistory.add(homeAddress);
   }
 
   public Address getWorkAddress()
@@ -159,5 +173,25 @@ public class Member extends BaseEntity
   public void setDescription(String description)
   {
     this.description = description;
+  }
+
+  public List<String> getUsedUserIds()
+  {
+    return usedUserIds;
+  }
+
+  public void setUsedUserIds(List<String> usedUserIds)
+  {
+    this.usedUserIds = usedUserIds;
+  }
+
+  public Set<Address> getAddressHistory()
+  {
+    return addressHistory;
+  }
+
+  public void setAddressHistory(Set<Address> addressHistory)
+  {
+    this.addressHistory = addressHistory;
   }
 }

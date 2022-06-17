@@ -1,6 +1,7 @@
 package com.roman14.jpabasic.entity.embeded;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 @Embeddable
 public class Address
@@ -45,5 +46,20 @@ public class Address
   private final void setZipCode(String zipCode)
   {
     this.zipCode = zipCode;
+  }
+
+  @Override
+  public boolean equals(Object o)
+  {
+    if ( this == o ) return true;
+    if ( o == null || getClass() != o.getClass() ) return false;
+    Address address1 = (Address) o;
+    return Objects.equals(city, address1.city) && Objects.equals(address, address1.address) && Objects.equals(zipCode, address1.zipCode);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return Objects.hash(city, address, zipCode);
   }
 }
