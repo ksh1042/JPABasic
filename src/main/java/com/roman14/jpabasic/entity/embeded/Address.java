@@ -54,12 +54,12 @@ public class Address
     if ( this == o ) return true;
     if ( o == null || getClass() != o.getClass() ) return false;
     Address address1 = (Address) o;
-    return Objects.equals(city, address1.city) && Objects.equals(address, address1.address) && Objects.equals(zipCode, address1.zipCode);
+    return Objects.equals(getCity(), address1.getCity()) && Objects.equals(getAddress(), address1.getAddress()) && Objects.equals(getZipCode(), address1.getZipCode());
   }
 
   @Override
   public int hashCode()
   {
-    return Objects.hash(city, address, zipCode);
+    return Objects.hash(getCity(), getAddress(), getZipCode());
   }
 }
