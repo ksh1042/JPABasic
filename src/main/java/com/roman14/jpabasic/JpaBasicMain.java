@@ -5,7 +5,5 @@ public class JpaBasicMain
   public static void main(String[] args)
   {
     JpaBasic jb = new JpaBasic();
-
-    jb.addMember();
   }
 }

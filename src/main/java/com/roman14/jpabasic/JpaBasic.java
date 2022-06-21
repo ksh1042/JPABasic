@@ -2,10 +2,7 @@ package com.roman14.jpabasic;
 
 
 import com.roman14.jpabasic.entity.Member;
-import com.roman14.jpabasic.entity.Team;
-import com.roman14.jpabasic.entity.embeded.Address;
-import com.roman14.jpabasic.entity.embeded.WorkTime;
-import com.roman14.jpabasic.entity.enumeration.Sex;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,91 +10,119 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.time.LocalDateTime;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Optional;
 
 public class JpaBasic
 {
   private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-  public void addMember()
+  private static final SecureRandom sr = new SecureRandom();
+
+  private final EntityManagerFactory emf;
+
+  public JpaBasic()
   {
+    this.emf = Persistence.createEntityManagerFactory("JpaBasic");
+    this.em = this.emf.createEntityManager();
+  }
+
+  private final EntityManager em;
+
+
+  public void addMember(Member member)
+  {
+    EntityTransaction tx = createTransaction(this.em);
+
+    this.em.persist(member);
+
+    tx.commit();
+  }
+
+  public Optional<Member> findMember(Long id)
+  {
+    EntityTransaction tx = createTransaction(this.em);
+
+    Optional<Member> result = Optional.of( this.em.find(Member.class, id) );
+
+    tx.commit();
+    return result;
+  }
+
+  public Optional<List<Member>> findMemberJPQL()
+  {
+    Optional<List<Member>> result = Optional.empty();
+
     EntityManagerFactory emf = null;
     EntityManager em = null;
-    EntityTransaction tx = null;
+    Transaction tx = null;
 
     try
     {
-      emf = Persistence.createEntityManagerFactory("JpaBasic");
-      em  = emf.createEntityManager();
-      tx  = em.getTransaction();
+      emf = Persistence.createEntityManagerFactory("JPABasic");
+      em = emf.createEntityManager();
+
       tx.begin();
 
-      final Team team = new Team();
-      team.setName("Backend1");
-
-      final Member member = new Member();
-
-      final WorkTime workTime = new WorkTime(LocalDateTime.now());
-
-      final Address homeAddress = new Address("city", "cheon-an", "136136");
-      final Address workAddress = new Address("city", "seoul", "151324");
-
-      member.setUserId("roman14");
-      member.setName("Moon");
-      member.setTeam(team);
-      member.setWorkTime(workTime);
-      member.setSex(Sex.INTERSEX);
-      member.setRegistUserId("_SYSTEM");
-      member.setRegistDate(LocalDateTime.now());
-      member.setDescription("create by system");
-      member.setHomeAddress(homeAddress);
-      member.setWorkAddress(workAddress);
-
-      em.persist(member);
-
-      em.flush();
-      em.clear();
-
-      final Member findMember = em.find(Member.class, member.getId());
-
-      System.out.println("findMember.getClass() = " + findMember.getClass());
-      System.out.println("findMember.getName() = " + findMember.getName());
+      result = Optional.of( em.createQuery("SELECT m FROM Member as m WHERE m.userId = '1'").getResultList() );
 
       tx.commit();
+      em.close();
     }
-    catch( Exception e )
+    catch(Exception e)
     {
-      if( tx != null ) tx.rollback();
-      e.printStackTrace();
-      throw e;
-    }
-    finally
-    {
-      if( em != null ) em.close();
-      if( emf != null ) emf.close();
+      if(tx != null) tx.rollback();
     }
 
+    return result;
   }
 
-  private Member createMemberDummy(long id)
+  public List<Member> criteria()
   {
-    final Member member = new Member();
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Member> query = cb.createQuery(Member.class);
 
-    member.setId(id);
-    member.setName("name" + id);
-    member.setSex(Sex.MALE);
-    member.setDescription("create new member");
+    Root<Member> m = query.from(Member.class);
 
-    return member;
+    return em.createQuery(
+      query.select(m).where(cb.equal(m.get("name"), "Moon"))
+    ).getResultList();
   }
 
-  private Team createTeamDummy(long id)
+  public List<Member> nativeQuery()
   {
-    final Team team = new Team();
+    String query = "SELECT m.* FROM MEMBER m ORDER BY m.member_id DESC;";
 
-    team.setId(id);
-    team.setName("team1");
+    return em.createNativeQuery(query, Member.class)
+      .getResultList();
+  }
 
-    return team;
+  private EntityTransaction createTransaction(EntityManager em)
+  {
+    EntityTransaction tx = em.getTransaction();
+
+    tx.begin();
+
+    return tx;
+  }
+
+  public final void flush()
+  {
+    if(em != null) em.flush();
+  }
+
+  public final void clear()
+  {
+    if(em != null) em.clear();
+  }
+
+  public final void close()
+  {
+    if(em != null) em.close();
+    if(emf != null) emf.close();
   }
 }

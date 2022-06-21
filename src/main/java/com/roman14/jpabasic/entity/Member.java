@@ -56,7 +56,6 @@ public class Member extends BaseEntity
   @Embedded
   @AttributeOverrides({
     @AttributeOverride(name = "city", column = @Column(name = "work_city")),
-    @AttributeOverride(name = "address", column = @Column(name = "work_address")),
     @AttributeOverride(name = "zipCode", column = @Column(name = "work_zipCode"))
   })
   private Address workAddress;
